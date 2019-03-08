@@ -10,14 +10,12 @@ import (
 
 func main() {
 	flag.Parse()
-	// fmt.Println("option:", flag.Args())
 	dir, _ := filepath.Abs(filepath.Dir(os.Args[0]))
 	if len(flag.Args()) != 0 && flag.Args()[0] == "true" {
 		// $ photopic true
 		///////////////////////////////////
 		// TODO :: 날짜별 분류
 		///////////////////////////////////
-
 	} else {
 		// $ photopic
 		makeDir()
@@ -26,9 +24,11 @@ func main() {
 			return
 		}
 		for _, file := range files {
-			if strings.Contains(file.Name(), "JPG") {
+			fn := strings.Split(file.Name(), ".")
+			fileType := fn[len(fn)-1]
+			if fileType == "JPG" {
 				os.Rename(file.Name(), "./jpg/"+file.Name())
-			} else if strings.Contains(file.Name(), "RAF") {
+			} else if fileType == "RAF" || fileType == "CR2" {
 				os.Rename(file.Name(), "./raw/"+file.Name())
 			}
 		}

@@ -10,6 +10,7 @@ import (
 
 func main() {
 	flag.Parse()
+	// fmt.Println("option:", flag.Args())
 	dir, _ := filepath.Abs(filepath.Dir(os.Args[0]))
 	if len(flag.Args()) != 0 && flag.Args()[0] == "true" {
 		// $ photopic true
@@ -28,7 +29,7 @@ func main() {
 			fileType := fn[len(fn)-1]
 			if fileType == "JPG" {
 				os.Rename(file.Name(), "./jpg/"+file.Name())
-			} else if fileType == "RAF" || fileType == "CR2" {
+			} else if fileType == "RAF" || fileType == "CR2" || fileType == "ARW" {
 				os.Rename(file.Name(), "./raw/"+file.Name())
 			}
 		}

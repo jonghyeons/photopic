@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -9,41 +10,47 @@ import (
 )
 
 func main() {
+	dir := ""
 	flag.Parse()
-	// fmt.Println("option:", flag.Args())
-	dir, _ := filepath.Abs(filepath.Dir(os.Args[0]))
-	if len(flag.Args()) != 0 && flag.Args()[0] == "true" {
-		// $ photopic true
-		///////////////////////////////////
-		// TODO :: 날짜별 분류
-		///////////////////////////////////
+	// fmt.Println("Your flags :: ", flag.Args())
+
+	if len(flag.Args()) != 0 {
+		dir = flag.Args()[0]
 	} else {
-		// $ photopic
-		makeDir()
-		files, _ := ioutil.ReadDir(dir)
-		if len(files) == 0 {
-			return
-		}
-		for _, file := range files {
-			fn := strings.Split(file.Name(), ".")
-			fileType := fn[len(fn)-1]
-			if fileType == "JPG" {
-				os.Rename(file.Name(), "./jpg/"+file.Name())
-			} else if fileType == "RAF" || fileType == "CR2" || fileType == "ARW" {
-				os.Rename(file.Name(), "./raw/"+file.Name())
-			}
+		dir, _ = filepath.Abs(filepath.Dir(os.Args[0]))
+	}
+
+	makeDir(dir)
+	files, err := ioutil.ReadDir(dir)
+
+	if len(files) == 0 || err != nil {
+		fmt.Println("ERROR")
+		fmt.Println(err.Error())
+		return
+	}
+
+	rawType := []string{"RAF", "CR2", "CR3", "ARW"}
+
+	for _, file := range files {
+		fn := strings.Split(file.Name(), ".")
+		fileType := fn[len(fn)-1]
+
+		if fileType == "JPG" {
+			os.Rename(dir+"/"+file.Name(), dir+"/jpg/"+file.Name())
+		} else if Contains(rawType, fileType) {
+			os.Rename(dir+"/"+file.Name(), dir+"/raw/"+file.Name())
 		}
 	}
 }
 
-func makeDir() {
-	jpgDir, _ := exists("./jpg")
+func makeDir(path string) {
+	jpgDir, _ := exists(path + "/jpg")
 	if !jpgDir {
-		os.MkdirAll("./jpg", os.ModePerm)
+		os.MkdirAll(path+"/jpg", os.ModePerm)
 	}
-	rawDir, _ := exists("./raw")
+	rawDir, _ := exists(path + "/raw")
 	if !rawDir {
-		os.MkdirAll("./raw", os.ModePerm)
+		os.MkdirAll(path+"/raw", os.ModePerm)
 	}
 }
 
@@ -56,4 +63,13 @@ func exists(path string) (bool, error) {
 		return false, nil
 	}
 	return true, err
+}
+
+func Contains(a []string, x string) bool {
+	for _, n := range a {
+		if x == n {
+			return true
+		}
+	}
+	return false
 }

@@ -1,4 +1,4 @@
-module github.com/whdgus906/photopic
+module github.com/jonghyeons/photopic
 
 go 1.12
 

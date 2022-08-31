@@ -5,7 +5,10 @@ JPG, RAW file sorter program in terminal written golang
 
 
 ### How to install
-
+```bash
+go get github.com/jonghyeons/photopic
+```
+OR
 ```bash
 $ git clone https://github.com/jonghyeons/photopic.git
 $ cd photopic
@@ -17,11 +20,14 @@ $ go install
 ### Usage
 
 ```bash
+# Show help
+$ photopic help
+
 # Run in current filepath
-$ photopic
+$ photopic run
 
 # Run another filepath
-$ photopic YOURFILEPATH
+$ photopic run YOUR_FILE_PATH
 ```
 
 

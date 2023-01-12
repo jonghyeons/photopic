@@ -16,7 +16,7 @@ $ go install
 
 ```bash
 # Show help
-$ photopic help
+$ photopic --help
 
 # Run in current filepath
 $ photopic run
@@ -25,7 +25,7 @@ $ photopic run
 $ photopic run YOUR_FILE_PATH
 ```
 
-### Directory after runing
+### Directory after running
 
 ```bash
 +-- /FILEPATH

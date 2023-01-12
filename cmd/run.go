@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/jonghyeons/photopic/models/constant"
 	"github.com/jonghyeons/photopic/utils"
 	"github.com/rwcarlsen/goexif/exif"
 	"github.com/spf13/cobra"
@@ -31,15 +32,13 @@ photopic run [filepath]`,
 			dir = args[0]
 		} else {
 			var err error
-			dir, err = os.Getwd()
-			if err != nil {
+			if dir, err = os.Getwd(); err != nil {
 				fmt.Println(err.Error())
 				os.Exit(1)
 			}
 		}
 
-		err := utils.MakeDir(dir)
-		if err != nil {
+		if err := utils.MakeDir(dir); err != nil {
 			fmt.Println(err.Error())
 			os.Exit(1)
 		}
@@ -49,6 +48,7 @@ photopic run [filepath]`,
 			fmt.Println(err.Error())
 			os.Exit(1)
 		}
+
 		if len(files) == 0 {
 			fmt.Println("empty directory")
 			os.Exit(1)
@@ -73,31 +73,32 @@ func init() {
 }
 
 func AnalysisExifAndMoveFile(dir string, files []fs.FileInfo) {
-	rawTypes := []string{"RAF", "CRW", "CR2", "CR3", "NEF", "NRW", "PEF", "DNG", "SRW", "ORF", "SRF", "SR2", "ARW", "RW2", "3FR", "DCR", "KDC", "MRW", "RWL", "DNG", "MOS", "X3F", "GPR"}
-
 	for _, file := range files {
+		if strings.Contains(file.Name(), "/raw") || strings.Contains(file.Name(), "/jpg") {
+			continue
+		}
 		fn := strings.Split(file.Name(), ".")
 		fileType := fn[len(fn)-1]
+		if utils.Contains(constant.RawTypes, fileType) {
+			if err := AnalysisAngle(dir + "/" + file.Name()); err != nil {
+				fmt.Println(file.Name(), err.Error())
+			}
+		}
 
-		if fileType == "JPG" {
-			err := os.Rename(filepath.Join(dir, "/", file.Name()), filepath.Join(dir, "/jpg/", file.Name()))
-			if err != nil {
-				fmt.Println(file.Name(), err.Error())
-			}
-		} else if utils.Contains(rawTypes, fileType) {
-			err := SetLensAngleCnt(dir + "/" + file.Name())
-			if err != nil {
-				fmt.Println(file.Name(), err.Error())
-			}
-			err = os.Rename(filepath.Join(dir, "/", file.Name()), filepath.Join(dir, "/raw/", file.Name()))
-			if err != nil {
-				fmt.Println(file.Name(), err.Error())
-			}
+		newPath := ""
+		if strings.ToUpper(fileType) == "JPG" {
+			newPath = "/jpg/"
+		} else if utils.Contains(constant.RawTypes, fileType) {
+			newPath = "/raw/"
+		}
+
+		if err := os.Rename(filepath.Join(dir, "/", file.Name()), filepath.Join(dir, newPath, file.Name())); err != nil {
+			fmt.Println(file.Name(), err.Error())
 		}
 	}
 }
 
-func SetLensAngleCnt(fnameWithPath string) error {
+func AnalysisAngle(fnameWithPath string) error {
 	f, err := os.Open(fnameWithPath)
 	if err != nil {
 		return err

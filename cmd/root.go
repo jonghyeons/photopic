@@ -15,7 +15,7 @@ var rootCmd = &cobra.Command{
   / /_/ / __ \/ __ \/ __/ __ \/ __ \/ / ___/
  / ____/ / / / /_/ / /_/ /_/ / /_/ / / /__  
 /_/   /_/ /_/\____/\__/\____/ .___/_/\___/  
-                           /_/              ` + constant.Version +
+                           /_/              v` + constant.Version +
 		`
 Photopic is JPG, RAW file sorting program in terminal`,
 }

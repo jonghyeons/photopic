@@ -74,32 +74,41 @@ func init() {
 
 func AnalysisExifAndMoveFile(dir string, files []fs.FileInfo) {
 	for _, file := range files {
-		if strings.Contains(file.Name(), "/raw") || strings.Contains(file.Name(), "/jpg") {
+		fn := strings.Split(file.Name(), ".")
+		if len(fn) == 1 {
 			continue
 		}
-		fn := strings.Split(file.Name(), ".")
-		fileType := fn[len(fn)-1]
-		if utils.Contains(constant.RawTypes, fileType) {
-			if err := AnalysisAngle(dir + "/" + file.Name()); err != nil {
-				fmt.Println(file.Name(), err.Error())
+
+		if utils.Filter(file.Name()) {
+			fmt.Println(2)
+			continue
+		}
+
+		filePath := filepath.Join(dir, "/", file.Name())
+		fileExtension := fn[len(fn)-1]
+		if utils.Contains(constant.RawTypes, fileExtension) {
+			if err := AnalysisAngle(filePath); err != nil {
+				fmt.Println(err.Error())
 			}
 		}
 
 		newPath := ""
-		if strings.ToUpper(fileType) == "JPG" {
+		if strings.ToUpper(fileExtension) == "JPG" {
 			newPath = "/jpg/"
-		} else if utils.Contains(constant.RawTypes, fileType) {
+		} else if utils.Contains(constant.RawTypes, fileExtension) {
 			newPath = "/raw/"
+		} else {
+			continue
 		}
 
-		if err := os.Rename(filepath.Join(dir, "/", file.Name()), filepath.Join(dir, newPath, file.Name())); err != nil {
-			fmt.Println(file.Name(), err.Error())
+		if err := os.Rename(filePath, filepath.Join(dir, newPath, file.Name())); err != nil {
+			fmt.Println(err.Error())
 		}
 	}
 }
 
-func AnalysisAngle(fnameWithPath string) error {
-	f, err := os.Open(fnameWithPath)
+func AnalysisAngle(filePath string) error {
+	f, err := os.Open(filePath)
 	if err != nil {
 		return err
 	}

@@ -32,9 +32,9 @@ func Exists(path string) bool {
 	return true
 }
 
-func Contains(a []string, x string) bool {
-	for _, n := range a {
-		if x == n {
+func Contains(arr []string, s string) bool {
+	for _, v := range arr {
+		if s == v {
 			return true
 		}
 	}

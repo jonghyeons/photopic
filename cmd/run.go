@@ -67,11 +67,6 @@ photopic run [filepath]`,
 	},
 }
 
-func init() {
-	rootCmd.AddCommand(runCmd)
-	rootCmd.Flags().BoolP("directory", "d", false, "Specifies the directory. (default: current file path)")
-}
-
 func AnalysisExifAndMoveFile(dir string, files []fs.FileInfo) {
 	for _, file := range files {
 		fn := strings.Split(file.Name(), ".")

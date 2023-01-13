@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"github.com/jonghyeons/photopic/models/constant"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -14,7 +15,8 @@ var rootCmd = &cobra.Command{
   / /_/ / __ \/ __ \/ __/ __ \/ __ \/ / ___/
  / ____/ / / / /_/ / /_/ /_/ / /_/ / / /__  
 /_/   /_/ /_/\____/\__/\____/ .___/_/\___/  
-                           /_/              v2.0.0
+                           /_/              ` + constant.Version +
+		`
 Photopic is JPG, RAW file sorting program in terminal`,
 }
 
@@ -23,4 +25,9 @@ func Execute() {
 	if err != nil {
 		os.Exit(1)
 	}
+}
+
+func init() {
+	rootCmd.AddCommand(runCmd)
+	rootCmd.AddCommand(versionCmd)
 }
